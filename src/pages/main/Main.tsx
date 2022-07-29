@@ -2,7 +2,7 @@ import React from 'react';
 
 const Main: React.FC = () => {
     return (
-        <span className="test">Main page!</span>
+        <span>Main page!</span>
     )
 }
 

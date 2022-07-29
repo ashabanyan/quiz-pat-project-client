@@ -38,9 +38,9 @@ module.exports = {
             {
                 test: /\.(ts|tsx)?$/,
                 loader: 'ts-loader',
-                options: {
-                  transpileOnly: true,
-                },
+                // options: {
+                //   transpileOnly: true,
+                // },
                 exclude: /node_modules/,
             },
             {
@@ -68,5 +68,8 @@ module.exports = {
             }
 
         ],
-    }
+    },
+    resolve: {
+        extensions: ['.ts', '.tsx', '.js']
+    },
 }
