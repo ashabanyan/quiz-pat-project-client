@@ -1,6 +1,8 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const { webpack } = require('webpack');
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
     mode: 'development',
@@ -21,12 +23,13 @@ module.exports = {
         extensions: ['.tsx', '.tsx', '.js'],
     },
     plugins: [
+        new Dotenv(),
         new HtmlWebpackPlugin({
             template: './public/index.html',
             inject: true,
             filename: 'index.html',
           }),
-        new MiniCssExtractPlugin()
+        new MiniCssExtractPlugin(),
     ],
     module: {
         rules: [
@@ -70,6 +73,6 @@ module.exports = {
         ],
     },
     resolve: {
-        extensions: ['.ts', '.tsx', '.js']
+        extensions: ['.ts', '.tsx', '.js'],
     },
 }

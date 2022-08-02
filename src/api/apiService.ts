@@ -1,0 +1,31 @@
+import axios from "axios";
+import { AuthResponse } from "../types/authResponse";
+
+const apiService = axios.create({
+    withCredentials: true,
+    baseURL: process.env.API_URL
+})
+
+apiService.interceptors.request.use((config) => {
+    config.headers!.Authorization = `Bearer ${localStorage.getItem('token')}`
+    return config
+})
+
+apiService.interceptors.response.use((config) => {
+    return config;
+}, async (error) => {
+    const originalRequest = error.config;
+    if (error.response.status === 401 && error.config && !error.config._isRetry) {
+        originalRequest._isRetry = true;
+        try {
+            const response = await axios.get<AuthResponse>(`${process.env.API_URL}/refresh`, {withCredentials: true})
+            localStorage.setItem('token', response.data.accessToken);
+            return apiService.request(originalRequest);
+        } catch (e) {
+            console.log('НЕ АВТОРИЗОВАН')
+        }
+    }
+    throw error;
+})
+
+export default apiService;
