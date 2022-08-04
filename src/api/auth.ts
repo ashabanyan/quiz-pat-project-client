@@ -1,4 +1,4 @@
-import { IFullUser } from '../types/user';
+import { IFullUser, IUserRequest } from '../types/user';
 import ApiService from './apiService'
 
 export interface AnyObject {
@@ -30,5 +30,14 @@ export const logout = async(): Promise<void> => {
         return data
     } catch (error) {
         console.error(error.message)
+    }
+}
+
+export const registration = async(values: IUserRequest): Promise<IFullUser> => {
+    try {
+        const { data } = await ApiService.post('/registration', values)
+        return data
+    } catch (error) {
+        throw new Error(error.response.data.message)
     }
 }

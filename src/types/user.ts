@@ -4,11 +4,15 @@ export interface IUser {
     name: string
     surname: string
     patronymic: string
-    role_id: number
+    role_id: string
 }
 
 export interface IFullUser {
     accessToken: string
     refreshToken: string
     user: IUser
+}
+
+export interface IUserRequest extends Omit<IUser, 'id'> {
+    password: string
 }

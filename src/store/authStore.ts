@@ -1,6 +1,6 @@
-import { IFullUser, IUser } from "../types/user";
+import { IFullUser, IUser, IUserRequest } from "../types/user";
 import { makeAutoObservable } from "mobx"
-import { loginUser, refreshToken } from "../api/auth";
+import { loginUser, refreshToken, registration } from "../api/auth";
 import ApiService from '../api/apiService'
 
 export class AuthStore {
@@ -87,6 +87,19 @@ export class AuthStore {
             this.setEmptyUser()
         } catch (error) {
             console.error(error.message)
+        }
+    }
+
+    async registration(values: IUserRequest) {
+        this.setIsLoading(true)
+        try {
+            const registrationData = await registration(values)
+            localStorage.setItem('accessToken', registrationData.accessToken)
+            this.setFullUser(registrationData)
+        } catch (error) {
+            return error
+        } finally {
+            this.setIsLoading(false)
         }
     }
 }

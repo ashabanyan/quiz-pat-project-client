@@ -2,11 +2,9 @@ import { inject, observer } from 'mobx-react';
 import React, { useEffect, useState } from 'react';
 import { Route } from 'react-router';
 import { useHistory } from 'react-router-dom';
-import { refreshToken } from '../api/auth';
 import { BasePageProps } from '../types/props';
 import Layout from './Layout';
 import LoginForm from '../pages/Login';
-import { TailSpin } from  'react-loader-spinner'
 import LoadingSpinner from './LoadingSpinner';
 
 interface IPage extends BasePageProps {
@@ -18,7 +16,6 @@ interface IPage extends BasePageProps {
 const Page: React.FC<IPage> = ({ store, children, ...rest }) => {
     const { auth } = store
     const { isAuth } = auth
-    const history = useHistory()
 
     useEffect(() => {
         if (localStorage.getItem('accessToken')) {
