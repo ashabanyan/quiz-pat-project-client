@@ -66,6 +66,10 @@ module.exports = {
         type: "asset/resource",
       },
       {
+        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+        type: "asset/inline",
+      },
+      {
         test: /\.(woff|woff2|eot|ttf|otf)$/,
         type: "asset/resourse",
       },

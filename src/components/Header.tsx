@@ -1,24 +1,23 @@
-import { inject, observer } from 'mobx-react';
 import React from 'react';
-import { BasePageProps } from '../types/props';
-import Logo from '../assets/logo.png'
+import { useHistory } from 'react-router-dom';
+import Logo from '../assets/quiz-logo.png'
 import { bem } from '../utils/helpers';
+import HeaderMenu from './header-components/headerMenu';
+import HeaderUserMenu from './header-components/HeaderUserMenu';
 
 const b = bem('header')
-interface IHeader extends BasePageProps {
+
+const Header: React.FC = () => {
+    const history = useHistory()
+    const handleLogoClick = () => history.push('/')
     
-}
-
-const Header: React.FC<IHeader> = ({ store }) => {
-
-    // const logoutButtonClicked = async () => store.auth.logout()
-
     return (
-        <>
-            <img className={b('logo')} src={Logo} />
-            {/* <button onClick={logoutButtonClicked}>Выйти</button> */}
-        </>
+        <header className={b()}>
+            <img className={b('logo')} src={Logo} onClick={handleLogoClick} />
+            <HeaderMenu />
+            <HeaderUserMenu />
+        </header>
     )
 }
 
-export default inject('store')(observer(Header))
+export default Header

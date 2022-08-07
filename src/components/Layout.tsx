@@ -1,3 +1,4 @@
+import Container from '@mui/material/Container';
 import React from 'react';
 import { bem } from '../utils/helpers';
 import Header from './Header';
@@ -11,10 +12,15 @@ const b = bem('layout')
 const Layout: React.FC<ILayout> = ({ children }) => {
 
     return (
-        <main className={b('container')}>
+        // <div className={b()}>
+        <Container maxWidth="xl" className={b()}>
             <Header />
-            {children}
-        </main>
+            <main className={b('container')}>
+                {children}
+            </main>
+        </Container>
+        // </div>
+
     )
 }
 

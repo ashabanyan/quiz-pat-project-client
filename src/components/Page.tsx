@@ -1,7 +1,6 @@
 import { inject, observer } from 'mobx-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Route } from 'react-router';
-import { useHistory } from 'react-router-dom';
 import { BasePageProps } from '../types/props';
 import Layout from './Layout';
 import LoginForm from '../pages/Login';

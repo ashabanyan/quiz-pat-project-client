@@ -6,13 +6,14 @@ import Login from '../pages/Login';
 import Main from '../pages/main/Main';
 import NotFound from '../pages/NotFound';
 import Other from '../pages/other/Other';
+import QuizCatalog from '../pages/QuizCatalog';
 
 const RouterComponent: React.FC = () => {
     return (
         <Switch>
-            {/* <Page exact path="/login">
-                <Login />
-            </Page> */}
+            <Page exact path="/catalog">
+                <QuizCatalog />
+            </Page>
             <Page exact path="/">
                 <Main />
             </Page>

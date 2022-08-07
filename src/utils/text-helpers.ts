@@ -11,3 +11,5 @@ export const getLoginButtonTooltipText = (email: string, password: string): stri
                 ? loginPageButtonTooltip.empty
                 : ''
 }
+
+export const getUserNameFirstLetters = (name: string, surname: string): string => `${name[0].toUpperCase()}${surname[0].toUpperCase()}`

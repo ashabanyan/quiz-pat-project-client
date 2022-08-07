@@ -30,7 +30,6 @@ const RegistrationForm: React.FC<IRegistrationForm>  = ({ store }) => {
 
     const registrationButtonClicked = async (values: IUserRequest) => {
         const registrationData = await auth.registration(values)
-        console.log(registrationData)
     }
 
     return (

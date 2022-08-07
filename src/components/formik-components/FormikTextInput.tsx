@@ -21,10 +21,7 @@ const FormikTextInput: React.FC<IFormikInput> = ({ label, type, required, ...pro
     const [field, meta] = useField(props)
 
     const caption = meta.touched && meta.error ? meta.error : null
-
-    console.log(b())
     
-
     return (
         <FormikField label={label} caption={caption} required={required}>
             <Input 

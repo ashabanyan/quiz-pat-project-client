@@ -2,6 +2,7 @@ import { IFullUser, IUser, IUserRequest } from "../types/user";
 import { makeAutoObservable } from "mobx"
 import { loginUser, refreshToken, registration } from "../api/auth";
 import ApiService from '../api/apiService'
+import { logger } from "../utils/helpers";
 
 export class AuthStore {
     isAuth = false
