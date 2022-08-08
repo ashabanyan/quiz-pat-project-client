@@ -28,6 +28,7 @@ module.exports = {
       template: "./public/index.html",
       inject: true,
       filename: "index.html",
+      publicPath: "/",
     }),
     new MiniCssExtractPlugin(),
   ],
@@ -35,7 +36,7 @@ module.exports = {
     rules: [
       {
         test: /\.(js|jsx)$/,
-        exclude: /node-modules/,
+        exclude: path.resolve(__dirname, "node_modules/"),
         use: ["babel-loader"],
       },
       {

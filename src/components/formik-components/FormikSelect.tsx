@@ -10,21 +10,22 @@ interface IFormikSelect {
     name: string
     required?: boolean
     options: ISelectOptions[]
+    label: string
 }
 
-const FormikSelect: React.FC<IFormikSelect> = ({ required, options,  ...props }) => {
+const FormikSelect: React.FC<IFormikSelect> = ({ required, options, label,  ...props }) => {
 
     const [field, meta, helper] = useField(props)
 
     const caption = meta.touched && meta.error ? meta.error : null
 
     return (
-        <FormikField label="Роль" caption={caption} required={required}>
+        <FormikField label={label} caption={caption} required={required}>
             <Select
                 fullWidth
                 input={<Input {...field} {...props} />}
                 >
-                {options.map(item => <MenuItem key={item.name} value={item.name}>{item.translation}</MenuItem>)}
+                {options.map(item => <MenuItem key={item.name} value={item.id}>{item.translation}</MenuItem>)}
             </Select>
 
         </FormikField>

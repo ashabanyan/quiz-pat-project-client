@@ -72,7 +72,7 @@ const RegistrationForm: React.FC<IRegistrationForm>  = ({ store }) => {
                             placeholder="Введите ваше отчество"
                             label="Отчество"
                         />
-                        <FormikSelect name="role_id" required options={userRoles} />
+                        <FormikSelect name="role_id" label="Роль" required options={userRoles} />
 
                         <Button                
                             className={b('registrationButton')} 

@@ -1,7 +1,8 @@
-import { Logout, PersonAdd, Settings } from '@mui/icons-material';
+import { Logout, AdminPanelSettings, PersonAdd, Settings } from '@mui/icons-material';
 import { Avatar, Divider, IconButton, ListItemIcon, Menu, MenuItem } from '@mui/material';
 import { inject, observer } from 'mobx-react';
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { userMenuPaperProps } from '../../constants/header';
 import { BaseComponentProps } from '../../types/props';
 import { bem } from '../../utils/helpers';
@@ -15,12 +16,14 @@ interface IHeaderUserMenu extends BaseComponentProps {
 
 const HeaderUserMenu: React.FC<IHeaderUserMenu> = ({ store }) => {
     const { auth } = store
+    const history = useHistory()
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const menuOpened = Boolean(anchorEl)
 
     const menuClicked = (e: React.MouseEvent<HTMLElement>) => setAnchorEl(e.currentTarget)
     const menuClosed = () => setAnchorEl(null)
 
+    const adminButtonClicked = () => history.push('/admin')
     const logoutButtonClicked = async () => auth.logout()
 
     const { name, surname} = auth.user
@@ -63,6 +66,13 @@ const HeaderUserMenu: React.FC<IHeaderUserMenu> = ({ store }) => {
                         <Logout fontSize="small" />
                     </ListItemIcon>
                     Выход
+                </MenuItem>
+
+                <MenuItem onClick={adminButtonClicked}>
+                    <ListItemIcon>
+                        <AdminPanelSettings fontSize="small" />
+                    </ListItemIcon>
+                    Администрирование
                 </MenuItem>
             </Menu>
         </div>

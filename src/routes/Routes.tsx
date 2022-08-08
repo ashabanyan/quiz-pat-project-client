@@ -1,18 +1,24 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
-import Layout from '../components/Layout';
+import { Switch } from 'react-router-dom';
 import Page from '../components/Page';
-import Login from '../pages/Login';
+import AdminPage from '../pages/Admin';
 import Main from '../pages/main/Main';
 import NotFound from '../pages/NotFound';
 import Other from '../pages/other/Other';
 import QuizCatalog from '../pages/QuizCatalog';
+import QuizCreatePage from '../pages/QuizCreate';
 
 const RouterComponent: React.FC = () => {
     return (
         <Switch>
             <Page exact path="/catalog">
                 <QuizCatalog />
+            </Page>
+            <Page exact path="/admin">
+                <AdminPage />
+            </Page>
+            <Page exact path="/admin/quiz/create">
+                <QuizCreatePage />
             </Page>
             <Page exact path="/">
                 <Main />
