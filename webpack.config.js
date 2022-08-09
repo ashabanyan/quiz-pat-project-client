@@ -28,7 +28,6 @@ module.exports = {
       template: "./public/index.html",
       inject: true,
       filename: "index.html",
-      publicPath: "/",
     }),
     new MiniCssExtractPlugin(),
   ],

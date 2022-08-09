@@ -24,3 +24,10 @@ export const registrationFormSchema = Yup.object({
     patronymic: Yup.string(),
     role_id: Yup.string().required(requiredField)
 })
+
+export const quizInfoSchema = Yup.object({
+    name: Yup.string().required(requiredField),
+    category: Yup.number().required(requiredField),
+    level: Yup.number().required(requiredField),
+    cover: Yup.mixed().required('File is required')
+})

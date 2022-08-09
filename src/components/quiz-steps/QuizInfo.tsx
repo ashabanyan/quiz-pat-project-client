@@ -2,21 +2,28 @@ import { PhotoCamera } from '@mui/icons-material';
 import { Button, IconButton, Input } from '@mui/material';
 import { Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
+import { saveFile } from '../../api/fileStorage';
 import { getQuizCategories, getQuizLevels } from '../../api/nsi';
 import { ISelectOptions, userRoles } from '../../constants/selectsOptions';
-import { IQuizLevel, IQuizCategories } from '../../types/quiz';
+import { quizInfoSchema } from '../../constants/ValidationSchemas';
+import { IQuizLevel, IQuizCategories, IQuizForm, IQuizCoverFile } from '../../types/quiz';
+import { bem } from '../../utils/helpers';
+import FormikFileUploader from '../formik-components/FormikFileUploader';
 import FormikSelect from '../formik-components/FormikSelect';
 import FormikTextInput from '../formik-components/FormikTextInput';
+
+const b = bem('quiz-info')
 
 const QuizInfoForm: React.FC = () => {
     const [levels, setLevels] = useState<IQuizLevel[]>(null)
     const [categories, setCategories] = useState<IQuizCategories[]>(null)
+    const [fileInfo, setFileInfo] = useState<IQuizCoverFile>()
 
     const initialValues = {
         name: '',
-        category: '',
-        level: '',
-        cover: ''
+        category: "",
+        level: "",
+        cover: {} as File
     }
 
     useEffect(() => {
@@ -34,17 +41,20 @@ const QuizInfoForm: React.FC = () => {
         setCategories(data)
     }
 
-    useEffect(() => console.log('categories ----- ', levels), [levels])
-    console.log(userRoles)
+    const formSubmit = async (values: IQuizForm) => {
+        const data = await saveFile(values.cover)
+        console.log(data)
+    }
 
     return (
-        <>
+        <div className={b()}>
             {levels && categories
                 ? <Formik
                 initialValues={initialValues}
-                onSubmit={(values) => console.log(values)}
+                // validationSchema={quizInfoSchema}
+                onSubmit={formSubmit}
             >
-                {(values) => (
+                {({ values, setFieldValue}) => (
                     <Form>
                         <FormikTextInput
                             name='name'
@@ -58,12 +68,7 @@ const QuizInfoForm: React.FC = () => {
 
                         <FormikSelect name="category" label="Категория квиза" required options={categories} />
 
-                        <label htmlFor="contained-button-file">
-                            <Input id="contained-button-file"  type="file" />
-                            <Button variant="contained" component="span">
-                            Upload
-                            </Button>
-                        </label>
+                        <FormikFileUploader changeFunc={setFieldValue} name="cover" label="Загрузите файл" required />
 
                         <Button                
                             variant="contained"
@@ -77,7 +82,7 @@ const QuizInfoForm: React.FC = () => {
             </Formik>
             : <h1>Hello</h1>
             }
-        </>
+        </div>
     )
 }
 

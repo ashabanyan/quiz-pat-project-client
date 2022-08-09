@@ -1,7 +1,7 @@
 import { Grid } from '@mui/material';
 import { inject, observer } from 'mobx-react';
 import React, { useEffect, useMemo, useState } from 'react';
-import { getFile } from '../api/fileStorage';
+// import { getFile } from '../api/fileStorage';
 import { getOneQuiz, getQuizCover } from '../api/quiz';
 import { BasePageProps } from '../types/props';
 import { bem } from '../utils/helpers';
@@ -37,17 +37,6 @@ const QuizCatalog: React.FC<IQuizCatalog> = () => {
 
     useEffect(() => console.log(cover), [cover])
 
-    const filePath = useMemo(() => {
-        if (cover && cover.destination && cover.filename) {
-            // return 'localhost:7789/files/quizcover/174c2187-9b33-4253-acc8-4f139ddae024.jpeg'
-            return `${process.env.API_URL}/${cover.destination}${cover.filename}`
-        } else {
-            return 'hello'
-        }
-
-    }, [cover])
-
-    console.log(filePath)
 
     return (
         <>            
@@ -56,7 +45,6 @@ const QuizCatalog: React.FC<IQuizCatalog> = () => {
                     
                 </Grid>
                 <Grid className={b('main-block')} item xs={6}>
-                    <img src={filePath} />
                 </Grid>
                 <Grid item xs={3}>
                     

@@ -5,6 +5,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Input from '@mui/material/Input';
 import { ISelectOptions } from '../../constants/selectsOptions';
+import { CompressOutlined } from '@mui/icons-material';
 
 interface IFormikSelect {
     name: string
