@@ -35,9 +35,6 @@ const QuizCatalog: React.FC<IQuizCatalog> = () => {
 
     const getCover = async () => getQuizCover()
 
-    useEffect(() => console.log(cover), [cover])
-
-
     return (
         <>            
             <Grid container spacing={2}>

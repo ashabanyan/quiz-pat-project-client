@@ -31,10 +31,6 @@ const FormikFileUploader: React.FC<IFormikFileUploader> = ({ required, label, ch
 
     return (
         <FormikField label={label} caption={caption} required={required}>
-            <label htmlFor="file-upload">
-                <PhotoCamera />
-            </label>
-            
             <Input 
                 {...props} 
                 onChange={onChange} 

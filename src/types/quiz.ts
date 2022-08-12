@@ -10,10 +10,10 @@ export interface IQuizCategories {
     translation: string
 }
 
-export interface IQuizForm {
+export interface IQuizInfoForm {
     name: string
-    level: string
-    category: string
+    level_id: string
+    category_id: string
     cover: File
 }
 
@@ -25,3 +25,35 @@ export interface IQuizCoverFile {
     destination: string
     size: number
 }
+
+export interface IQuizInfoReq extends Omit<IQuizInfoForm, 'cover'> {
+    cover_id: number
+}
+
+export interface IQuizRound {
+    id: number,
+    name: string,
+}
+
+export interface IQuizRoundsValues {
+    roundCount: string,
+    rounds: IQuizRound[]
+}
+
+// ---------------- QuizQuestions ----------------
+
+export interface IQuizQuestionItem {
+    id: number
+    question: string
+    answer: string
+}
+
+export interface IQuizQuestions {
+    roundId: number,
+    questionsCount: number,
+    questions: IQuizQuestionItem[]
+}
+export interface IQuizQuestionsValues {
+    roundsQuestions: IQuizQuestions[]
+}
+

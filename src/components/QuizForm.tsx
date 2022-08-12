@@ -1,57 +1,61 @@
 import { Box, Button, Step, StepLabel, Stepper, Typography } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
+import { IQuizInfoForm, IQuizQuestionsValues, IQuizRound, IQuizRoundsValues } from '../types/quiz';
 import QuizInfoForm from './quiz-steps/QuizInfo';
+import { QuizSteps } from '../types/enums/quiz'
+import QuizRoundForm from './quiz-steps/QuizRound';
+import QuizQuestionsForm from './quiz-steps/QuizQuestions';
 
 const steps = ['Параметры квиза', 'Создание раундов', 'Создание вопросов'];
 
 const QuizCreate: React.FC = () => {
     const [activeStep, setActiveStep] = useState(0);
-    const [skipped, setSkipped] = useState(new Set<number>());
+    const [quizInfo, setQuizInfo] = useState<IQuizInfoForm>(null)
+    const [quizRound, setQuizRound] = useState<IQuizRoundsValues>(null)
+    const [quizQuestions, setQuizQuestions] = useState<IQuizQuestionsValues>(null)
 
-    const isStepOptional = (step: number) => {
-        return step === 1;
-      };
+    // ----------------------------------------------------------------
+    const handleNext = () => setActiveStep(activeStep + 1)
 
-    const isStepSkipped = (step: number) => {
-    return skipped.has(step);
-    };
-
-    const handleNext = () => {
-    let newSkipped = skipped;
-    if (isStepSkipped(activeStep)) {
-        newSkipped = new Set(newSkipped.values());
-        newSkipped.delete(activeStep);
-    }
-
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    setSkipped(newSkipped);
-    };
-
-    const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    };
-
-    const handleSkip = () => {
-    if (!isStepOptional(activeStep)) {
-        // You probably want to guard against something like this,
-        // it should never occur unless someone's actively trying to break something.
-        throw new Error("You can't skip a step that isn't optional.");
-    }
-
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    setSkipped((prevSkipped) => {
-        const newSkipped = new Set(prevSkipped.values());
-        newSkipped.add(activeStep);
-        return newSkipped;
-    });
-    };
+    const handleBack = () => setActiveStep(activeStep - 1)
 
     const handleReset = () => {
-    setActiveStep(0);
+        setActiveStep(0);
     };
 
+    const handleSaveQuiz = () => {
+        console.log({quizInfo,quizRound,quizQuestions})
 
+        
+    }
+    // ----------------------------------------------------------------
 
+    const presaveQuizInfo = (values: IQuizInfoForm, step: QuizSteps) => setQuizInfo(values)
+    
+
+    const presaveRoundInfo = (values: IQuizRoundsValues, step: QuizSteps) => setQuizRound(values)
+
+    const presaveQuestionInfo = (values: IQuizQuestionsValues) => setQuizQuestions(values)
+
+    const stepComponenProps = {
+        activeStep: activeStep,
+        handleNext: handleNext,
+        handleBack: handleBack,
+        stepsLength: steps.length,
+    }
+
+    const CurrentStepComponent = useMemo(() => {
+        return activeStep === 0 
+            ? <QuizInfoForm {...stepComponenProps} presaveData={presaveQuizInfo} currentData={quizInfo} />
+            : activeStep === 1
+                ? <QuizRoundForm {...stepComponenProps} presaveData={presaveRoundInfo} currentData={quizRound} />
+                : <QuizQuestionsForm 
+                    {...stepComponenProps} 
+                    presaveData={presaveQuestionInfo} 
+                    roundsInfo={quizRound ? quizRound.rounds : null} 
+                    handleSave={handleSaveQuiz}
+                    />
+    }, [activeStep])
 
     return (
         <>
@@ -61,14 +65,6 @@ const QuizCreate: React.FC = () => {
                 const labelProps: {
                     optional?: React.ReactNode;
                 } = {};
-                if (isStepOptional(index)) {
-                    labelProps.optional = (
-                    <Typography variant="caption">Optional</Typography>
-                    );
-                }
-                if (isStepSkipped(index)) {
-                    stepProps.completed = false;
-                }
                 return (
                     <Step key={label} {...stepProps}>
                         <StepLabel {...labelProps}>{label}</StepLabel>
@@ -88,27 +84,8 @@ const QuizCreate: React.FC = () => {
                     </React.Fragment>
                 ) : (
                     <React.Fragment>
-                    {activeStep === 0 && <QuizInfoForm />}
-                    <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                        <Button
-                        color="inherit"
-                        disabled={activeStep === 0}
-                        onClick={handleBack}
-                        sx={{ mr: 1 }}
-                        >
-                        Back
-                        </Button>
-                        <Box sx={{ flex: '1 1 auto' }} />
-                        {isStepOptional(activeStep) && (
-                        <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
-                            Skip
-                        </Button>
-                        )}
-                        <Button onClick={handleNext}>
-                        {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-                        </Button>
-                    </Box>
-                </React.Fragment>
+                        {CurrentStepComponent}
+                    </React.Fragment>
             )}
         </>
     )

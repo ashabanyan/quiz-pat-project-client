@@ -1,9 +1,9 @@
 import axios from 'axios'
+import { IQuizCoverFile } from '../types/quiz'
 import ApiService from './apiService'
 
-export const saveFile = async (file: File) => {
+export const saveFile = async (file: File): Promise<IQuizCoverFile> => {
     try {
-        console.log('Дошло')
         const formData = new FormData()
         formData.append('file', file)
 
@@ -13,8 +13,9 @@ export const saveFile = async (file: File) => {
             }
         }
 
-        const { data } = await axios.post('http://localhost:7789/api/quizcover', formData, config)
-        console.log(data)
+        const { data } = await ApiService.post('/quizcover', formData, config )
+
+       return data
     } catch (error) {
         console.log('Ошибка ----- ', error)
     }

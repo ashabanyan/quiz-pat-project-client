@@ -1,28 +1,37 @@
-import { PhotoCamera } from '@mui/icons-material';
-import { Button, IconButton, Input } from '@mui/material';
-import { Form, Formik } from 'formik';
+import { Button, Grid } from '@mui/material';
+import { Form, Formik, useFormikContext } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { saveFile } from '../../api/fileStorage';
 import { getQuizCategories, getQuizLevels } from '../../api/nsi';
-import { ISelectOptions, userRoles } from '../../constants/selectsOptions';
-import { quizInfoSchema } from '../../constants/ValidationSchemas';
-import { IQuizLevel, IQuizCategories, IQuizForm, IQuizCoverFile } from '../../types/quiz';
+import { createQuizInfo } from '../../api/quiz';
+import { quizInfoSchema, quizRoundSchema } from '../../constants/ValidationSchemas';
+import { IQuizLevel, IQuizCategories, IQuizInfoForm, IQuizCoverFile, IQuizInfoReq } from '../../types/quiz';
 import { bem } from '../../utils/helpers';
 import FormikFileUploader from '../formik-components/FormikFileUploader';
 import FormikSelect from '../formik-components/FormikSelect';
 import FormikTextInput from '../formik-components/FormikTextInput';
+import QuizStepsButtonBlock from './QuizStepsButtonBlock';
+import { QuizSteps } from '../../types/enums/quiz'
 
 const b = bem('quiz-info')
 
-const QuizInfoForm: React.FC = () => {
+interface IQuizInfoFormComponent {
+    activeStep: number
+    handleNext: () => void
+    handleBack: () => void
+    stepsLength: number
+    presaveData: (values: IQuizInfoForm, step: QuizSteps) => void
+    currentData: IQuizInfoForm | null
+}
+
+const QuizInfoForm: React.FC<IQuizInfoFormComponent> = ({ activeStep, handleNext, handleBack, stepsLength, presaveData, currentData }) => {
     const [levels, setLevels] = useState<IQuizLevel[]>(null)
     const [categories, setCategories] = useState<IQuizCategories[]>(null)
-    const [fileInfo, setFileInfo] = useState<IQuizCoverFile>()
 
-    const initialValues = {
+    const initialValues = currentData ?? {
         name: '',
-        category: "",
-        level: "",
+        category_id: '',
+        level_id: '',
         cover: {} as File
     }
 
@@ -41,42 +50,91 @@ const QuizInfoForm: React.FC = () => {
         setCategories(data)
     }
 
-    const formSubmit = async (values: IQuizForm) => {
-        const data = await saveFile(values.cover)
-        console.log(data)
-    }
+    const formSubmit = (values: IQuizInfoForm) => presaveData(values, QuizSteps.INFO)
+
+    // --------
+
+    // const testFunc = async () => {
+    //     const data = await quizRoundSchema.isValid(obj)
+    //     console.log(data)
+    // }
+
+    // testFunc()
+
+
+    // --------
+
+    // const saveQuizInfo = async (values: IQuizInfoForm, fileData: IQuizCoverFile) => {
+    //     const { cover, ...rest } = values
+    //     const quizObj: IQuizInfoReq = {
+    //         ...rest,
+    //         cover_id: fileData.id
+    //     }
+    //     const data = await createQuizInfo(quizObj)
+
+    // }
+
+
+
+    // const formSubmit = async (values: IQuizInfoForm) => {
+    //     const fileData = await saveFile(values.cover)
+    //     const quizInfo = await saveQuizInfo(values, fileData)
+    // }
 
     return (
         <div className={b()}>
             {levels && categories
                 ? <Formik
                 initialValues={initialValues}
-                // validationSchema={quizInfoSchema}
+                validationSchema={quizInfoSchema}
                 onSubmit={formSubmit}
             >
                 {({ values, setFieldValue}) => (
                     <Form>
-                        <FormikTextInput
-                            name='name'
-                            placeholder="Введите название квиза"
-                            label="Название"
-                            type="text"
-                            required
+
+                        <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
+                            <Grid item xs={6}>
+                                <FormikTextInput
+                                    name='name'
+                                    placeholder="Введите название квиза"
+                                    label="Название"
+                                    type="text"
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <FormikSelect 
+                                    name="level_id" 
+                                    label="Сложность квиза" 
+                                    required 
+                                    options={levels} 
+                                />
+                            </Grid>
+
+                            <Grid item xs={6}>
+                                <FormikSelect 
+                                    name="category_id" 
+                                    label="Категория квиза" 
+                                    required 
+                                    options={categories} 
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <FormikFileUploader 
+                                    changeFunc={setFieldValue} 
+                                    name="cover" 
+                                    label="Загрузите файл" 
+                                    required 
+                                />
+                            </Grid>
+                        </Grid>
+
+                        <QuizStepsButtonBlock 
+                            activeStep={activeStep} 
+                            handleBack={handleBack} 
+                            handleNext={handleNext} 
+                            stepsLength={stepsLength}
                         />
-    
-                        <FormikSelect name="level" label="Сложность квиза" required options={levels} />
-
-                        <FormikSelect name="category" label="Категория квиза" required options={categories} />
-
-                        <FormikFileUploader changeFunc={setFieldValue} name="cover" label="Загрузите файл" required />
-
-                        <Button                
-                            variant="contained"
-                            type="submit"
-                            size="small"
-                        >
-                            Сохранить
-                        </Button>
                     </Form>
                 )}
             </Formik>
