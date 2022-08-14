@@ -23,8 +23,11 @@ const FormikTextInput: React.FC<IFormikInput> = ({ label, type, required, ...pro
     const caption = meta.touched && meta.error ? meta.error : null
     
     return (
-        <FormikField label={label} caption={caption} required={required}>
-            <Input 
+        <FormikField caption={caption}>
+            <TextField 
+                id="outlined-basic" 
+                label={label}
+                variant="outlined" 
                 className={b()}
                 fullWidth
                 type={type ?? 'text'}

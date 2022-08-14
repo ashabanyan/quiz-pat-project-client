@@ -21,3 +21,9 @@ export const getRoundCountArray = (count: number): ISelectOptions[] => Array.fro
     name: `${item + 1}`,
     translation: `${item + 1}`
 }))
+
+export const getHumanFileSize = (size: number) => {
+    const kbValue = size / 1024
+    const mbValue = kbValue / 1024
+    return mbValue < 1 ? `${kbValue.toFixed(2)} КБ` : `${mbValue.toFixed(2)} МБ`
+}

@@ -1,31 +1,29 @@
-import { Divider, SelectChangeEvent } from '@mui/material';
+import { Box, Button, Divider, SelectChangeEvent } from '@mui/material';
 import { FieldArray, FieldInputProps, Form, Formik } from 'formik';
 import React from 'react';
 import { quizQuestionsForm } from '../../constants/ValidationSchemas';
 import { IQuizQuestionItem, IQuizQuestions, IQuizQuestionsValues, IQuizRound } from '../../types/quiz';
-import { getRoundCountArray, logger } from '../../utils/helpers';
+import { getRoundCountArray} from '../../utils/helpers';
 import FormikSelect from '../formik-components/FormikSelect';
 import FormikTextInput from '../formik-components/FormikTextInput';
-import QuizStepsButtonBlock from './QuizStepsButtonBlock';
 
 interface IQuizQuestionsForm {
-    activeStep: number
-    handleNext: () => void
-    handleBack: () => void
-    stepsLength: number
     roundsInfo: IQuizRound[] | null
     presaveData: (values: IQuizQuestionsValues) => void
-    handleSave: () => void
+    currentData: IQuizQuestionsValues
 }
 
-const QuizQuestionsForm: React.FC<IQuizQuestionsForm> = ({ activeStep, handleNext, handleBack, stepsLength, roundsInfo, presaveData, handleSave }) => {
+const QuizQuestionsForm: React.FC<IQuizQuestionsForm> = ({ roundsInfo, presaveData, currentData }) => {
     const createEmptyRoundsQuestions = (): IQuizQuestions[] => roundsInfo && roundsInfo.map((item, index) => ({
         roundId: index,
         questionsCount: null,
         questions: [] as IQuizQuestionItem[]
-    }))
+    })) 
 
-    const initialValues = {
+    console.log(roundsInfo)
+
+    const initialValues = currentData ?? {
+        roundCount: roundsInfo?.length,
         roundsQuestions: createEmptyRoundsQuestions()
     }
 
@@ -54,18 +52,17 @@ const QuizQuestionsForm: React.FC<IQuizQuestionsForm> = ({ activeStep, handleNex
         field.onChange(e)
     }  
 
-    const handleSubmit = (values: IQuizQuestionsValues) => presaveData(values)
+    const handleSubmit = async (values: IQuizQuestionsValues) => presaveData(values)
 
     return (
         <>
             <Formik
                 initialValues={initialValues}
                 onSubmit={handleSubmit}
-                // validationSchema={quizQuestionsForm}
+                validationSchema={quizQuestionsForm}
             >
                 {({ values, setValues, isValid }) => (
                     <Form>
-
                         {roundsInfo && <FieldArray name="roundsQuestions">
                             {() => 
                                 roundsInfo.map((round, index) => {
@@ -121,14 +118,11 @@ const QuizQuestionsForm: React.FC<IQuizQuestionsForm> = ({ activeStep, handleNex
                                 })
                             }
                         </FieldArray>}
-
-                        <QuizStepsButtonBlock 
-                            activeStep={activeStep} 
-                            handleBack={handleBack} 
-                            handleNext={handleNext} 
-                            stepsLength={stepsLength}
-                            handleSave={handleSave}
-                        />  
+                        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', pt: 2 }}>
+                            <Button type="submit">
+                                Сохранить черновик шага
+                            </Button>
+                        </Box>
                     </Form>
                 )}
             </Formik>

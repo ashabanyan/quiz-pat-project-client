@@ -1,38 +1,34 @@
-import { SelectChangeEvent } from '@mui/material';
+import { Box, Button, SelectChangeEvent } from '@mui/material';
 import { FieldArray, FieldInputProps, Form, Formik } from 'formik';
 import React from 'react';
 import { quizRoundSchema } from '../../constants/ValidationSchemas';
-import { QuizSteps } from '../../types/enums/quiz';
 import { IQuizRound, IQuizRoundsValues } from '../../types/quiz';
 import { getRoundCountArray } from '../../utils/helpers';
 import FormikSelect from '../formik-components/FormikSelect';
 import FormikTextInput from '../formik-components/FormikTextInput';
-import QuizStepsButtonBlock from './QuizStepsButtonBlock';
 
 interface IQuizRoundForm {
-    activeStep: number
-    handleNext: () => void
-    handleBack: () => void
-    stepsLength: number
-    presaveData: (values: IQuizRoundsValues, step: QuizSteps) => void
+    presaveData: (values: IQuizRoundsValues) => void
     currentData: IQuizRoundsValues | null
 }
 
-const QuizRoundForm: React.FC<IQuizRoundForm> = ({ activeStep, handleNext, handleBack, stepsLength, currentData, presaveData }) => {
+const QuizRoundForm: React.FC<IQuizRoundForm> = ({ currentData, presaveData }) => {
     const initialValues = currentData ?? {
         roundCount: "",
         rounds: [] as IQuizRound[]
     }
 
     const onRoundCountChange = (
-        e: SelectChangeEvent<any>,
+        e: React.ChangeEvent<HTMLInputElement>,
         field: FieldInputProps<any>,
         values: any,
         setValues: (value: any, shouldValidate?: boolean) => void
     ) => {
         const rounds = [...values.rounds]
-        const selectedCount = e.target.value
-        const previousCount = parseInt(field.value || '0')
+        const selectedCount = parseInt(e.target.value)
+        const previousCount = parseInt(field.value || 0)
+
+        // console.log('event ---- ', typeof e.target.value)
 
         if (previousCount < selectedCount) {
             for (let i = previousCount; i < selectedCount; i++) {
@@ -44,20 +40,20 @@ const QuizRoundForm: React.FC<IQuizRoundForm> = ({ activeStep, handleNext, handl
             }
         }
 
-        console.log('test ----- ', { ...values, rounds })
-        console.log(e.target.value)
-
         setValues({ ...values, rounds })
         field.onChange(e)
     }
 
-    const handleSubmit = (values: IQuizRoundsValues) => presaveData(values, QuizSteps.ROUND)
+    const handleSubmit = (values: IQuizRoundsValues) => {
+        console.log('hello')
+        presaveData(values)
+    }
 
     return (
         <>
             <Formik
                 initialValues={initialValues}
-                validationSchema={quizRoundSchema}
+                // validationSchema={quizRoundSchema}
                 onSubmit={handleSubmit}
             >
                 {({ values, setValues }) => (
@@ -88,13 +84,11 @@ const QuizRoundForm: React.FC<IQuizRoundForm> = ({ activeStep, handleNext, handl
                                 })
                             }
                         </FieldArray>
-
-                        <QuizStepsButtonBlock
-                            activeStep={activeStep}
-                            handleBack={handleBack}
-                            handleNext={handleNext}
-                            stepsLength={stepsLength}
-                        />
+                        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', pt: 2 }}>
+                            <Button type="submit">
+                                Сохранить черновик шага
+                            </Button>
+                        </Box>
                     </Form>
                 )}
             </Formik>

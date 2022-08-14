@@ -1,5 +1,6 @@
 import { ICover } from '../pages/QuizCatalog'
-import { IQuizInfoReq } from '../types/quiz'
+import { IQuizRequest } from '../types/quiz'
+// import { IQuizCommon, IQuizInfoRequest } from '../types/quiz'
 import ApiService from './apiService'
 
 export const getOneQuiz = async () => {
@@ -20,10 +21,11 @@ export const getQuizCover = async (): Promise<ICover> => {
     }
 }
 
-export const createQuizInfo = async (quizInfoObj: IQuizInfoReq) => {
+export const createQuizInfo = async (quizObject: IQuizRequest) => {
     try {
-        const { data } = await ApiService.post('/quizinfo', quizInfoObj)
+        const { data } = await ApiService.post('/quiz', quizObject)
+        console.log('DATA ----- ', data)
     } catch (error) {
-        
+        console.log(error)
     }
 }

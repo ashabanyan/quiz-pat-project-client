@@ -1,11 +1,12 @@
-import { FieldHelperProps, FieldInputProps, useField } from 'formik';
-import React, { useEffect } from 'react';
+import { Field, FieldInputProps, useField } from 'formik';
+import React, { ChangeEventHandler, useEffect } from 'react';
 import FormikField from './FormikField';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Input from '@mui/material/Input';
 import { ISelectOptions } from '../../constants/selectsOptions';
-import { CompressOutlined } from '@mui/icons-material';
+import { CompressOutlined, Outbound } from '@mui/icons-material';
+import { FormControl, InputLabel, OutlinedInput, TextField } from '@mui/material';
 
 interface IFormikSelect {
     name: string
@@ -14,7 +15,7 @@ interface IFormikSelect {
     label: string
     values?: any
     onChangeFunc?: 
-        (e: SelectChangeEvent<any>, 
+        (e: React.ChangeEvent<HTMLInputElement>, 
         field: FieldInputProps<any>, 
         values: any, 
         setValues: (value: any, shouldValidate?: boolean) => void) => void
@@ -27,25 +28,37 @@ const FormikSelect: React.FC<IFormikSelect> = ({ required, options, label, value
 
     const caption = meta.touched && meta.error ? meta.error : null
 
-    const handleChange = (e: SelectChangeEvent<any>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        console.log('hello')
         onChangeFunc(e, field, values, setValues)
     }
 
+
     const selectDefaultProps = {
         value: field.value ?? '',
+        label,
         fullWidth: true,
-        input: <Input {...field} {...props} />
+        select: true,
     } 
 
     const selectProps = !!onChangeFunc 
-        ? { ...selectDefaultProps, onChange: (e: SelectChangeEvent<any>) => handleChange(e)} 
-        : selectDefaultProps 
+        ? { ...selectDefaultProps, onChange: (e: React.ChangeEvent<HTMLInputElement>) => handleChange(e) } 
+        : { ...selectDefaultProps }
+
+    const SelectComponent = () => {
+        return (
+            <TextField {...field} {...selectProps} >
+                {options.map(item => <MenuItem key={item.id} value={item.id}>{item.translation ?? item.id}</MenuItem>)}
+             </TextField>
+        )
+    }
 
     return (
-        <FormikField label={label} caption={caption} required={required}>
-            <Select {...selectProps}>
-                {options.map(item => <MenuItem key={item.id} value={item.id}>{item.translation ?? item.id}</MenuItem>)}
-            </Select>
+        <FormikField caption={caption}>
+            <Field
+                name={props.name}
+                component={SelectComponent}
+            />
         </FormikField>
     )
 }

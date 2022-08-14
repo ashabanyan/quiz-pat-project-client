@@ -25,6 +25,20 @@ export const registrationFormSchema = Yup.object({
     role_id: Yup.string().required(requiredField)
 })
 
+// export const quizInfoSchema = Yup.object({
+//     name: Yup.string().required(requiredField),
+//     category_id: Yup.number().required(requiredField),
+//     level_id: Yup.number().required(requiredField),
+//     cover: Yup.object().shape({
+//         lastModified: Yup.number(),
+//         lastModifiedDate: Yup.date(),
+//         name: Yup.string(),
+//         size: Yup.number(),
+//         type: Yup.string(),
+//         webkitRelativePath: Yup.string().nullable()
+//     }).nullable().required(requiredField)
+// })
+
 export const quizInfoSchema = Yup.object({
     name: Yup.string().required(requiredField),
     category_id: Yup.number().required(requiredField),
@@ -51,7 +65,7 @@ export const quizRoundSchema = Yup.object({
 })
 
 export const quizQuestionsForm = Yup.object({
-    roundsCount: Yup.number().required(requiredField),
+    roundCount: Yup.number().required(requiredField),
     roundsQuestions: Yup.array().of(
         Yup.object().shape({
             roundId: Yup.number().required(requiredField),
@@ -78,7 +92,7 @@ export const quizQuestionsForm = Yup.object({
         params: { },
         message: 'Количество заполненных раундов должно соответствовать количеству выбранных раундов',
         test: function (value) {
-            return value.length === this.parent.roundsCount
+            return value.length === this.parent.roundCount
         },
     })
 })

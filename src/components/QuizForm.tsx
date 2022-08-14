@@ -1,18 +1,28 @@
 import { Box, Button, Step, StepLabel, Stepper, Typography } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
-import { IQuizInfoForm, IQuizQuestionsValues, IQuizRound, IQuizRoundsValues } from '../types/quiz';
+import { IQuizInfoValues, IQuizQuestionsValues, IQuizRoundsValues } from '../types/quiz';
 import QuizInfoForm from './quiz-steps/QuizInfo';
-import { QuizSteps } from '../types/enums/quiz'
 import QuizRoundForm from './quiz-steps/QuizRound';
 import QuizQuestionsForm from './quiz-steps/QuizQuestions';
+import { saveFile } from '../api/fileStorage';
+// import { createQuizInfo } from '../api/quiz';
+import QuizStepsButtonBlock from './quiz-steps/QuizStepsButtonBlock';
+import { modifyQuizObject } from '../utils/quiz-helpers';
+import { createQuizInfo } from '../api/quiz';
+import { quizInfoSchema } from '../constants/ValidationSchemas';
 
 const steps = ['Параметры квиза', 'Создание раундов', 'Создание вопросов'];
 
 const QuizCreate: React.FC = () => {
     const [activeStep, setActiveStep] = useState(0);
-    const [quizInfo, setQuizInfo] = useState<IQuizInfoForm>(null)
+    const [quizInfo, setQuizInfo] = useState<IQuizInfoValues>(null)
     const [quizRound, setQuizRound] = useState<IQuizRoundsValues>(null)
     const [quizQuestions, setQuizQuestions] = useState<IQuizQuestionsValues>(null)
+
+    useEffect(() => {
+        const quiz = { quizInfo, quizRound, quizQuestions }
+        console.log(quiz)
+    }, [quizInfo, quizRound, quizQuestions])
 
     // ----------------------------------------------------------------
     const handleNext = () => setActiveStep(activeStep + 1)
@@ -23,39 +33,37 @@ const QuizCreate: React.FC = () => {
         setActiveStep(0);
     };
 
-    const handleSaveQuiz = () => {
-        console.log({quizInfo,quizRound,quizQuestions})
+    const handleSaveQuiz = async () => {
 
-        
+        const fileData = await saveFile(quizInfo.cover)
+        const { cover, ...rest } = quizInfo
+        const quizInfoReq = { ...rest, cover_id: fileData.id }
+
+        const quizRequestObj = modifyQuizObject(quizInfoReq, quizRound, quizQuestions)
+
+        const quizRequest = await createQuizInfo(quizRequestObj)
     }
+
     // ----------------------------------------------------------------
 
-    const presaveQuizInfo = (values: IQuizInfoForm, step: QuizSteps) => setQuizInfo(values)
+    const presaveQuizInfo = (values: IQuizInfoValues) => setQuizInfo(values)
     
-
-    const presaveRoundInfo = (values: IQuizRoundsValues, step: QuizSteps) => setQuizRound(values)
+    const presaveRoundInfo = (values: IQuizRoundsValues) => setQuizRound(values)
 
     const presaveQuestionInfo = (values: IQuizQuestionsValues) => setQuizQuestions(values)
 
-    const stepComponenProps = {
-        activeStep: activeStep,
-        handleNext: handleNext,
-        handleBack: handleBack,
-        stepsLength: steps.length,
-    }
-
     const CurrentStepComponent = useMemo(() => {
         return activeStep === 0 
-            ? <QuizInfoForm {...stepComponenProps} presaveData={presaveQuizInfo} currentData={quizInfo} />
+            ? <QuizInfoForm presaveData={presaveQuizInfo} currentData={quizInfo} />
             : activeStep === 1
-                ? <QuizRoundForm {...stepComponenProps} presaveData={presaveRoundInfo} currentData={quizRound} />
-                : <QuizQuestionsForm 
-                    {...stepComponenProps} 
-                    presaveData={presaveQuestionInfo} 
-                    roundsInfo={quizRound ? quizRound.rounds : null} 
-                    handleSave={handleSaveQuiz}
+                ? <QuizRoundForm presaveData={presaveRoundInfo} currentData={quizRound} />
+                : <QuizQuestionsForm presaveData={presaveQuestionInfo} roundsInfo={quizRound ? quizRound.rounds : null} currentData={quizQuestions}
                     />
     }, [activeStep])
+
+    const isSaveButtonShown = useMemo(() => {
+        return quizInfo && quizRound && quizQuestions
+    }, [quizInfo, quizRound, quizQuestions])
 
     return (
         <>
@@ -87,6 +95,20 @@ const QuizCreate: React.FC = () => {
                         {CurrentStepComponent}
                     </React.Fragment>
             )}
+
+            <QuizStepsButtonBlock 
+                activeStep={activeStep} 
+                handleBack={handleBack} 
+                handleNext={handleNext} 
+                stepsLength={steps.length}
+            />  
+
+            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', pt: 2 }}>
+                <Button disabled={!isSaveButtonShown} variant="contained" onClick={handleSaveQuiz}>
+                    Сохранить квиз
+                </Button>
+            </Box>
+
         </>
     )
 }
