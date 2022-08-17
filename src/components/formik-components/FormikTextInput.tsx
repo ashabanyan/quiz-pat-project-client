@@ -1,9 +1,7 @@
 import TextField from '@mui/material/TextField';
-import { useField, useFormikContext } from 'formik';
+import { useField } from 'formik';
 import React from 'react';
 import FormikField from './FormikField';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import { Input } from '@mui/material';
 import { bem } from '../../utils/helpers';
 
 const b = bem('formik-text-input')
@@ -23,8 +21,11 @@ const FormikTextInput: React.FC<IFormikInput> = ({ label, type, required, ...pro
     const caption = meta.touched && meta.error ? meta.error : null
     
     return (
-        <FormikField label={label} caption={caption} required={required}>
-            <Input 
+        <FormikField caption={caption}>
+            <TextField 
+                id="outlined-basic" 
+                label={label}
+                variant="outlined" 
                 className={b()}
                 fullWidth
                 type={type ?? 'text'}

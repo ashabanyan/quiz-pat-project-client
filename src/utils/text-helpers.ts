@@ -12,4 +12,7 @@ export const getLoginButtonTooltipText = (email: string, password: string): stri
                 : ''
 }
 
-export const getUserNameFirstLetters = (name: string, surname: string): string => `${name[0].toUpperCase()}${surname[0].toUpperCase()}`
+export const getUserNameFirstLetters = (name: string, surname: string): string => 
+    name && surname 
+        ? `${name[0].toUpperCase()}${surname[0].toUpperCase()}` 
+        : ''

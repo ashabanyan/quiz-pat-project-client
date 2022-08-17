@@ -14,7 +14,7 @@ interface IPage extends BasePageProps {
 
 const Page: React.FC<IPage> = ({ store, children, ...rest }) => {
     const { auth } = store
-    const { isAuth } = auth
+    const { isAuth, isLoading } = auth
 
     useEffect(() => {
         if (localStorage.getItem('accessToken')) {
@@ -22,7 +22,7 @@ const Page: React.FC<IPage> = ({ store, children, ...rest }) => {
         }
     }, [])
 
-    if (auth.isLoading) {
+    if (isLoading) {
         return <LoadingSpinner height="200" width="200" />
     }
 
