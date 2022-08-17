@@ -40,10 +40,10 @@ const QuizCreate: React.FC<IQuizCreate> = ({ activeStep, handleNext, handleBack 
         setCategories(data)
     }
 
-    useEffect(() => {
-        const quiz = { quizInfo, quizRound, quizQuestions }
-        console.log(quiz)
-    }, [quizInfo, quizRound, quizQuestions])
+    // useEffect(() => {
+    //     const quiz = { quizInfo, quizRound, quizQuestions }
+    //     console.log(quiz)
+    // }, [quizInfo, quizRound, quizQuestions])
 
     // ----------------------------------------------------------------
     // const handleNext = () => setActiveStep(activeStep + 1)

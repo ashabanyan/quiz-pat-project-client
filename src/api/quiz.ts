@@ -31,7 +31,6 @@ export const getQuizCover = async (): Promise<IQuizCoverFile> => {
 export const createQuizInfo = async (quizObject: IQuizRequest) => {
     try {
         const { data } = await ApiService.post('/quiz', quizObject)
-        console.log('DATA ----- ', data)
     } catch (error) {
         console.log(error)
     }
