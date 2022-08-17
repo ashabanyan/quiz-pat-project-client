@@ -22,9 +22,7 @@ const FormikFileUploader: React.FC<IFormikFileUploader> = ({ required, label, ch
     const [fileSizeAttr, setFileSizeAttr] = useState<string | null>(null)
 
     const [field, meta, helper] = useField(props)
-    console.log(meta)
     const caption = meta.touched && meta.error
-    console.log(typeof caption)
 
     const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const image = e.currentTarget.files[0]

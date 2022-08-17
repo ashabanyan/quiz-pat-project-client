@@ -44,6 +44,8 @@ export const validateFile = async (file: File): Promise<{ error: boolean, messag
             img.onload = () => {
                 if (img.width !== quizInfoCoverWidth && img.height !== quizInfoCoverHeight) {
                     resolve({ error: true, message: 'Ширина и высота картинки не соответствуют требованиям (300px/150px)' })
+                } else {
+                    resolve({ error: false, message: '' })
                 }
                 
             }
