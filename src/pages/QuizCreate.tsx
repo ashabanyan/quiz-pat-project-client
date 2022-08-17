@@ -1,17 +1,23 @@
-import { Grid } from '@mui/material';
-import React from 'react';
+import { Grid  } from '@mui/material';
+import React, { useState } from 'react';
+import QuizMainRules from '../components/quiz-steps/QuizMainRules';
 import QuizForm from '../components/QuizForm';
 
 const QuizCreatePage: React.FC = () => {
+    const [activeStep, setActiveStep] = useState<number>(0);
+
+    const handleNext = () => setActiveStep(activeStep + 1)
+
+    const handleBack = () => setActiveStep(activeStep - 1)
+
     return (
         <>
-            <h1>QuizCreatePage</h1>
-            <Grid container>
+            <Grid container spacing={1}>
                 <Grid item xs={3}>
-                    Здесь будет информация по шагу
+                    <QuizMainRules />
                 </Grid>
                 <Grid item xs={9}>
-                    <QuizForm />
+                    <QuizForm activeStep={activeStep} handleNext={handleNext} handleBack={handleBack} />
                 </Grid>
             </Grid>
         </>

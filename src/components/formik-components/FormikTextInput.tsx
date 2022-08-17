@@ -1,9 +1,7 @@
 import TextField from '@mui/material/TextField';
-import { useField, useFormikContext } from 'formik';
+import { useField } from 'formik';
 import React from 'react';
 import FormikField from './FormikField';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import { Input } from '@mui/material';
 import { bem } from '../../utils/helpers';
 
 const b = bem('formik-text-input')

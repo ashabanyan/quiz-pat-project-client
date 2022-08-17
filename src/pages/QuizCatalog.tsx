@@ -2,38 +2,29 @@ import { Grid } from '@mui/material';
 import { inject, observer } from 'mobx-react';
 import React, { useEffect, useMemo, useState } from 'react';
 // import { getFile } from '../api/fileStorage';
-import { getOneQuiz, getQuizCover } from '../api/quiz';
+import { getAllQuiz } from '../api/quiz';
 import { BasePageProps } from '../types/props';
+import { IQuizInfoResponse } from '../types/quiz';
 import { bem } from '../utils/helpers';
 
 const b = bem('quiz-catalog')
 
 interface IQuizCatalog extends BasePageProps {}
 
-export interface ICover {
-    destination: string
-    extension: string
-    filename: string
-    id: number
-    originalname: string
-    size: number
-}
 
 const QuizCatalog: React.FC<IQuizCatalog> = () => {
-    const [quiz, setQuiz] = useState()
-    const [cover, setCover] = useState<ICover>()
-
+    const [quizzes, setQuizzes] = useState<IQuizInfoResponse[] | null>(null)
 
     useEffect(() => {
-        getQuiz()
+        getAllQuizzes()
     }, [])
 
-    const getQuiz = async () => getOneQuiz().then(res => {
-        setQuiz(res)
-        getCover().then(res => setCover(res))
-    })
+    const getAllQuizzes = async () => {
+        const allQuizzes = await getAllQuiz()
+        setQuizzes(allQuizzes)
+    }
 
-    const getCover = async () => getQuizCover()
+    useEffect(() => console.log(quizzes), [quizzes])
 
     return (
         <>            
@@ -41,11 +32,12 @@ const QuizCatalog: React.FC<IQuizCatalog> = () => {
                 <Grid item xs={3}>
                     
                 </Grid>
-                <Grid className={b('main-block')} item xs={6}>
-                </Grid>
-                <Grid item xs={3}>
-                    
-                </Grid>
+
+                {/* <img src={`${process.env.API_URL}/files/images/d99be675-3d8a-4cd8-b8c9-d2051f878f7b.jpeg`} /> */}
+
+                {quizzes && <Grid className={b('main-block')} item xs={9}>
+                    {quizzes.map(item => <img src={`${process.env.API_URL}/${item.cover.destination}${item.cover.filename}`} />)}
+                </Grid>}
             </Grid>
 
         </>

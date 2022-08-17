@@ -2,7 +2,7 @@ import axios from 'axios'
 import { IQuizCoverFile } from '../types/quiz'
 import ApiService from './apiService'
 
-export const saveFile = async (file: File): Promise<IQuizCoverFile> => {
+export const saveImage = async (file: File): Promise<IQuizCoverFile> => {
     try {
         const formData = new FormData()
         formData.append('file', file)
@@ -13,7 +13,7 @@ export const saveFile = async (file: File): Promise<IQuizCoverFile> => {
             }
         }
 
-        const { data } = await ApiService.post('/quizcover', formData, config )
+        const { data } = await ApiService.post('/saveimage', formData, config )
 
        return data
     } catch (error) {

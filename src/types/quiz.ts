@@ -67,13 +67,6 @@ export interface IQuizQuestionsValues {
     roundsQuestions: IQuizQuestions[]
 }
 
-// ---------------- QuizQuestions ----------------
-// export interface IQuizCommon {
-//     quizInfoReq: IQuizInfoRequest,
-//     quizRound: IQuizRoundsValues,
-//     quizQuestions: IQuizQuestionsValues
-// }
-
 // ---------------- Full Quiz for request ----------------
 
 export interface IQuizRounds {
@@ -85,4 +78,18 @@ export interface IQuizRounds {
 export interface IQuizRequest {
     quizInfo: IQuizInfoRequest
     quizRound: IQuizRounds[]
+}
+
+
+// ----------------------------------------------------------------------
+// ---------------------------RESPONSES----------------------------------
+// ----------------------------------------------------------------------
+export interface IQuizInfoResponse {
+    id: number
+    name: string
+    category_id: number
+    level_id: number
+    creator_id: number
+    access_roles_id: number[]
+    cover: IQuizCoverFile
 }

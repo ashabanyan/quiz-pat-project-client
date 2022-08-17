@@ -1,12 +1,9 @@
+import React from 'react';
 import { Field, FieldInputProps, useField } from 'formik';
-import React, { ChangeEventHandler, useEffect } from 'react';
 import FormikField from './FormikField';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import Input from '@mui/material/Input';
 import { ISelectOptions } from '../../constants/selectsOptions';
-import { CompressOutlined, Outbound } from '@mui/icons-material';
-import { FormControl, InputLabel, OutlinedInput, TextField } from '@mui/material';
+import { TextField } from '@mui/material';
 
 interface IFormikSelect {
     name: string

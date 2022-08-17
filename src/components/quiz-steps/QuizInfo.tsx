@@ -1,25 +1,26 @@
-import { Box, Button, Grid } from '@mui/material';
+import { CircularProgress, Grid } from '@mui/material';
 import { Form, Formik } from 'formik';
-import React, { useEffect, useState } from 'react';
-import { getQuizCategories, getQuizLevels } from '../../api/nsi';
+import React, { useState } from 'react';
+import { quizInfoCoverParams } from '../../constants/files';
 import { quizInfoSchema } from '../../constants/ValidationSchemas';
 import { IQuizLevel, IQuizCategories, IQuizInfoValues } from '../../types/quiz';
 import { bem } from '../../utils/helpers';
 import FormikFileUploader from '../formik-components/FormikFileUploader';
 import FormikSelect from '../formik-components/FormikSelect';
 import FormikTextInput from '../formik-components/FormikTextInput';
+import QuizStepButtonSubmit from './QuizStepButtonSubmit';
 
 const b = bem('quiz-info')
 
 interface IQuizInfoFormComponent {
     presaveData: (values: IQuizInfoValues) => void
     currentData: IQuizInfoValues | null
+    levels: IQuizLevel[] | null
+    categories: IQuizCategories[] | null
 }
 
-const QuizInfoForm: React.FC<IQuizInfoFormComponent> = ({ presaveData, currentData }) => {
-    const [levels, setLevels] = useState<IQuizLevel[]>(null)
-    const [categories, setCategories] = useState<IQuizCategories[]>(null)
-
+const QuizInfoForm: React.FC<IQuizInfoFormComponent> = ({ presaveData, currentData, levels, categories }) => {
+    const [isDataPresaved, setIsDataPresaved] = useState<boolean>(!!currentData)
     const initialValues = currentData ?? {
         name: '',
         category_id: '',
@@ -27,22 +28,12 @@ const QuizInfoForm: React.FC<IQuizInfoFormComponent> = ({ presaveData, currentDa
         cover: null as File
     }
 
-    useEffect(() => {
-        getLevels()
-        getCategories()
-    }, [])
-
-    const getLevels = async () => {
-        const data = await getQuizLevels()
-        setLevels(data)
+    const formSubmit = (values: IQuizInfoValues) => {
+        presaveData(values)
+        setIsDataPresaved(true)
     }
 
-    const getCategories = async () => {
-        const data = await getQuizCategories()
-        setCategories(data)
-    }
-
-    const formSubmit = (values: IQuizInfoValues) => presaveData(values)
+    const fileUploadTooltipText = `Макс. размер ${quizInfoCoverParams.size.mb} МБ. ${quizInfoCoverParams.width}/${quizInfoCoverParams.height}`
 
     return (
         <div className={b()}>
@@ -86,21 +77,18 @@ const QuizInfoForm: React.FC<IQuizInfoFormComponent> = ({ presaveData, currentDa
                                     changeFunc={setFieldValue} 
                                     name="cover" 
                                     label="Загрузите файл" 
-                                    text="Загрузить обложка квиза"
+                                    text="Загрузить обложку квиза"
                                     required 
+                                    tooltipText={fileUploadTooltipText}
                                 />
                             </Grid>
                         </Grid>
-                        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', pt: 2 }}>
-                            <Button type="submit">
-                                Сохранить черновик шага
-                            </Button>
-                        </Box>
+                        <QuizStepButtonSubmit presaved={isDataPresaved} />
                     </Form>
                     
                 )}
             </Formik>
-            : <h1>Hello</h1>
+            : <CircularProgress color="inherit" />
             }
         </div>
     )

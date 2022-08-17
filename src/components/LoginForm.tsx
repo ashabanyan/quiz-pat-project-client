@@ -1,8 +1,7 @@
 import React from 'react';
 import { inject, observer } from "mobx-react"
-import { BaseComponentProps, BasePageProps } from "../types/props"
+import { BaseComponentProps } from "../types/props"
 import { bem } from "../utils/helpers"
-import { modifyErrorText } from '../utils/errors-helpers';
 import FormikTextInput from './formik-components/FormikTextInput';
 import { Formik, Form } from 'formik';
 import { loginFormSchema } from '../constants/ValidationSchemas';

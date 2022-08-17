@@ -1,11 +1,14 @@
-import { Box, Button, SelectChangeEvent } from '@mui/material';
+import { Grid } from '@mui/material';
 import { FieldArray, FieldInputProps, Form, Formik } from 'formik';
-import React from 'react';
+import React, { useState } from 'react';
 import { quizRoundSchema } from '../../constants/ValidationSchemas';
 import { IQuizRound, IQuizRoundsValues } from '../../types/quiz';
-import { getRoundCountArray } from '../../utils/helpers';
+import { bem, getRoundCountArray } from '../../utils/helpers';
 import FormikSelect from '../formik-components/FormikSelect';
 import FormikTextInput from '../formik-components/FormikTextInput';
+import QuizStepButtonSubmit from './QuizStepButtonSubmit';
+
+const b = bem('quiz-round')
 
 interface IQuizRoundForm {
     presaveData: (values: IQuizRoundsValues) => void
@@ -13,6 +16,8 @@ interface IQuizRoundForm {
 }
 
 const QuizRoundForm: React.FC<IQuizRoundForm> = ({ currentData, presaveData }) => {
+    const [isDataPresaved, setIsDataPresaved] = useState<boolean>(!!currentData)
+
     const initialValues = currentData ?? {
         roundCount: "",
         rounds: [] as IQuizRound[]
@@ -27,8 +32,6 @@ const QuizRoundForm: React.FC<IQuizRoundForm> = ({ currentData, presaveData }) =
         const rounds = [...values.rounds]
         const selectedCount = parseInt(e.target.value)
         const previousCount = parseInt(field.value || 0)
-
-        // console.log('event ---- ', typeof e.target.value)
 
         if (previousCount < selectedCount) {
             for (let i = previousCount; i < selectedCount; i++) {
@@ -45,54 +48,54 @@ const QuizRoundForm: React.FC<IQuizRoundForm> = ({ currentData, presaveData }) =
     }
 
     const handleSubmit = (values: IQuizRoundsValues) => {
-        console.log('hello')
         presaveData(values)
+        setIsDataPresaved(true)
     }
 
     return (
-        <>
+        <div className={b()}>
             <Formik
                 initialValues={initialValues}
-                // validationSchema={quizRoundSchema}
+                validationSchema={quizRoundSchema}
                 onSubmit={handleSubmit}
             >
                 {({ values, setValues }) => (
                     <Form>
-                        <FormikSelect
-                            label="Количество раундов"
-                            name="roundCount"
-                            options={getRoundCountArray(10)}
-                            values={values}
-                            onChangeFunc={onRoundCountChange}
-                            setValues={setValues}
-                        />
+                        <Grid container spacing={3}>
+                            <Grid item xs={12}>
+                                <FormikSelect
+                                    label="Количество раундов"
+                                    name="roundCount"
+                                    options={getRoundCountArray(10)}
+                                    values={values}
+                                    onChangeFunc={onRoundCountChange}
+                                    setValues={setValues}
+                                />
+                            </Grid>
 
-                        <FieldArray name="rounds">
-                            {() =>
-                                values.rounds.map((item, index) => {
-                                    return (
-                                        <div key={index}>
-                                            <FormikTextInput
-                                                name={`rounds.${index}.name`}
-                                                placeholder="Введите название раунда"
-                                                label="Название"
-                                                type="text"
-                                                required
-                                            />
-                                        </div>
-                                    )
-                                })
-                            }
-                        </FieldArray>
-                        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', pt: 2 }}>
-                            <Button type="submit">
-                                Сохранить черновик шага
-                            </Button>
-                        </Box>
+                            <FieldArray name="rounds">
+                                {() =>
+                                    values.rounds.map((item, index) => {
+                                        return (
+                                            <Grid item xs={12} key={index}>
+                                                <FormikTextInput
+                                                    name={`rounds.${index}.name`}
+                                                    placeholder="Введите название раунда"
+                                                    label={`Название раунда № ${index + 1}`}
+                                                    type="text"
+                                                    required
+                                                />
+                                            </Grid>
+                                        )
+                                    })
+                                }
+                            </FieldArray>
+                        </Grid>
+                        <QuizStepButtonSubmit presaved={isDataPresaved} />
                     </Form>
                 )}
             </Formik>
-        </>
+        </div>
     )
 }
 

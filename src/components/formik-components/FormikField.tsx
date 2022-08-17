@@ -1,5 +1,5 @@
 import Typography from '@mui/material/Typography';
-import React, { useMemo } from 'react';
+import React from 'react';
 import { bem } from '../../utils/helpers';
 
 interface IFormikField {

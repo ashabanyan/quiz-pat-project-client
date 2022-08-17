@@ -1,13 +1,10 @@
 import { useField } from 'formik';
-import React, { ChangeEventHandler, SyntheticEvent, useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import FormikField from './FormikField';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import Input from '@mui/material/Input';
-import { ISelectOptions } from '../../constants/selectsOptions';
-import { bem, getHumanFileSize } from '../../utils/helpers';
-import { PhotoCamera } from '@mui/icons-material';
-import { Button, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField, Typography } from '@mui/material';
+import { bem, getHumanFileSize, validateFile } from '../../utils/helpers';
+import {  Typography } from '@mui/material';
+import TooltipComponent from '../sub-components/TooltipComponent';
+import InfoIcon from '@mui/icons-material/Info';
 
 interface IFormikFileUploader {
     name: string
@@ -15,23 +12,31 @@ interface IFormikFileUploader {
     label: string
     changeFunc: (field: string, value: any, shouldValidate?: boolean) => void
     text: string
+    tooltipText?: string
 }
 
 const b = bem('formik-file-uploader');
 
-const FormikFileUploader: React.FC<IFormikFileUploader> = ({ required, label, changeFunc, text, ...props }) => {
+const FormikFileUploader: React.FC<IFormikFileUploader> = ({ required, label, changeFunc, text, tooltipText, ...props }) => {
     const [fileData, setFileData] = useState<File>(null as File)
+    const [fileSizeAttr, setFileSizeAttr] = useState<string | null>(null)
 
     const [field, meta, helper] = useField(props)
+    console.log(meta)
+    const caption = meta.touched && meta.error
+    console.log(typeof caption)
 
-    const caption = meta.touched && meta.error ? meta.error : null
+    const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const image = e.currentTarget.files[0]
 
-    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFileData(e.currentTarget.files[0])
-        changeFunc('cover', e.currentTarget.files[0])
+        const fileValidation = await validateFile(image)
+        if (fileValidation.error) {
+            setFileSizeAttr(fileValidation.message)
+        } else {
+            setFileData(image)
+            changeFunc('cover', image)
+        }
     }
-
-    // const textInfo = fileData ? fileData.name : text
 
     const textInfo = useMemo(() => {
         if (!fileData) return text;
@@ -49,7 +54,7 @@ const FormikFileUploader: React.FC<IFormikFileUploader> = ({ required, label, ch
 
 
     return (
-        <FormikField caption={caption}>
+        <FormikField caption={fileSizeAttr ?? caption}>
             <input
                 accept="image/*"
                 style={{ display: "none" }}
@@ -60,9 +65,12 @@ const FormikFileUploader: React.FC<IFormikFileUploader> = ({ required, label, ch
             />
             <label htmlFor="contained-button-file" className={b('label')}>
                 <div className={b('block')}>
-                    <Typography variant="overline" display="block" gutterBottom>
-                        {textInfo} 
+                    <Typography variant="overline" display="block" className={b('text')} gutterBottom>
+                        {textInfo}
                     </Typography>
+                    {tooltipText && <TooltipComponent title={tooltipText}>
+                           <InfoIcon fontSize="small" color="primary" />
+                        </TooltipComponent>}
                 </div>
 
             </label>

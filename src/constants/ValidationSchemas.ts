@@ -25,20 +25,6 @@ export const registrationFormSchema = Yup.object({
     role_id: Yup.string().required(requiredField)
 })
 
-// export const quizInfoSchema = Yup.object({
-//     name: Yup.string().required(requiredField),
-//     category_id: Yup.number().required(requiredField),
-//     level_id: Yup.number().required(requiredField),
-//     cover: Yup.object().shape({
-//         lastModified: Yup.number(),
-//         lastModifiedDate: Yup.date(),
-//         name: Yup.string(),
-//         size: Yup.number(),
-//         type: Yup.string(),
-//         webkitRelativePath: Yup.string().nullable()
-//     }).nullable().required(requiredField)
-// })
-
 export const quizInfoSchema = Yup.object({
     name: Yup.string().required(requiredField),
     category_id: Yup.number().required(requiredField),

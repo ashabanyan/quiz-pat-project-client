@@ -1,23 +1,44 @@
 import { Box, Button, Step, StepLabel, Stepper, Typography } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
-import { IQuizInfoValues, IQuizQuestionsValues, IQuizRoundsValues } from '../types/quiz';
+import { IQuizCategories, IQuizInfoValues, IQuizLevel, IQuizQuestionsValues, IQuizRoundsValues } from '../types/quiz';
 import QuizInfoForm from './quiz-steps/QuizInfo';
 import QuizRoundForm from './quiz-steps/QuizRound';
 import QuizQuestionsForm from './quiz-steps/QuizQuestions';
-import { saveFile } from '../api/fileStorage';
-// import { createQuizInfo } from '../api/quiz';
+import { saveImage } from '../api/fileStorage';
 import QuizStepsButtonBlock from './quiz-steps/QuizStepsButtonBlock';
 import { modifyQuizObject } from '../utils/quiz-helpers';
 import { createQuizInfo } from '../api/quiz';
-import { quizInfoSchema } from '../constants/ValidationSchemas';
+import { getQuizCategories, getQuizLevels } from '../api/nsi';
+import { quizCreateSteps } from '../constants/quiz';
 
-const steps = ['Параметры квиза', 'Создание раундов', 'Создание вопросов'];
+interface IQuizCreate {
+    activeStep: number
+    handleNext: () => void
+    handleBack: () => void
+}
 
-const QuizCreate: React.FC = () => {
-    const [activeStep, setActiveStep] = useState(0);
+const QuizCreate: React.FC<IQuizCreate> = ({ activeStep, handleNext, handleBack }) => {
+    const [levels, setLevels] = useState<IQuizLevel[]>(null)
+    const [categories, setCategories] = useState<IQuizCategories[]>(null)
+    // const [activeStep, setActiveStep] = useState(0);
     const [quizInfo, setQuizInfo] = useState<IQuizInfoValues>(null)
     const [quizRound, setQuizRound] = useState<IQuizRoundsValues>(null)
     const [quizQuestions, setQuizQuestions] = useState<IQuizQuestionsValues>(null)
+
+    useEffect(() => {
+        getLevels()
+        getCategories()
+    }, [])
+
+    const getLevels = async () => {
+        const data = await getQuizLevels()
+        setLevels(data)
+    }
+
+    const getCategories = async () => {
+        const data = await getQuizCategories()
+        setCategories(data)
+    }
 
     useEffect(() => {
         const quiz = { quizInfo, quizRound, quizQuestions }
@@ -25,17 +46,17 @@ const QuizCreate: React.FC = () => {
     }, [quizInfo, quizRound, quizQuestions])
 
     // ----------------------------------------------------------------
-    const handleNext = () => setActiveStep(activeStep + 1)
+    // const handleNext = () => setActiveStep(activeStep + 1)
 
-    const handleBack = () => setActiveStep(activeStep - 1)
+    // const handleBack = () => setActiveStep(activeStep - 1)
 
-    const handleReset = () => {
-        setActiveStep(0);
-    };
+    // const handleReset = () => {
+    //     setActiveStep(0);
+    // };
 
     const handleSaveQuiz = async () => {
 
-        const fileData = await saveFile(quizInfo.cover)
+        const fileData = await saveImage(quizInfo.cover)
         const { cover, ...rest } = quizInfo
         const quizInfoReq = { ...rest, cover_id: fileData.id }
 
@@ -54,12 +75,12 @@ const QuizCreate: React.FC = () => {
 
     const CurrentStepComponent = useMemo(() => {
         return activeStep === 0 
-            ? <QuizInfoForm presaveData={presaveQuizInfo} currentData={quizInfo} />
+            ? <QuizInfoForm presaveData={presaveQuizInfo} currentData={quizInfo} levels={levels} categories={categories} />
             : activeStep === 1
                 ? <QuizRoundForm presaveData={presaveRoundInfo} currentData={quizRound} />
                 : <QuizQuestionsForm presaveData={presaveQuestionInfo} roundsInfo={quizRound ? quizRound.rounds : null} currentData={quizQuestions}
                     />
-    }, [activeStep])
+    }, [activeStep, levels, categories])
 
     const isSaveButtonShown = useMemo(() => {
         return quizInfo && quizRound && quizQuestions
@@ -68,7 +89,7 @@ const QuizCreate: React.FC = () => {
     return (
         <>
             <Stepper activeStep={activeStep}>
-                {steps.map((label, index) => {
+                {quizCreateSteps.map((label, index) => {
                 const stepProps: { completed?: boolean } = {};
                 const labelProps: {
                     optional?: React.ReactNode;
@@ -80,16 +101,16 @@ const QuizCreate: React.FC = () => {
                 );
                 })}
             </Stepper>
-            {activeStep === steps.length ? (
+            {activeStep === quizCreateSteps.length ? (
                 <React.Fragment>
-                    <Typography sx={{ mt: 2, mb: 1 }}>
+                    {/* <Typography sx={{ mt: 2, mb: 1 }}>
                         All steps completed - you&apos;re finished
                     </Typography>
                     <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
                         <Box sx={{ flex: '1 1 auto' }} />
                         <Button onClick={handleReset}>Reset</Button>
-                    </Box>
-                    </React.Fragment>
+                    </Box> */}
+                </React.Fragment>
                 ) : (
                     <React.Fragment>
                         {CurrentStepComponent}
@@ -100,14 +121,14 @@ const QuizCreate: React.FC = () => {
                 activeStep={activeStep} 
                 handleBack={handleBack} 
                 handleNext={handleNext} 
-                stepsLength={steps.length}
+                stepsLength={quizCreateSteps.length}
             />  
 
-            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', pt: 2 }}>
-                <Button disabled={!isSaveButtonShown} variant="contained" onClick={handleSaveQuiz}>
+            {isSaveButtonShown && <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', pt: 2 }}>
+                <Button variant="contained" onClick={handleSaveQuiz}>
                     Сохранить квиз
                 </Button>
-            </Box>
+            </Box>}
 
         </>
     )

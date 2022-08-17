@@ -11,15 +11,9 @@ interface IQuizStepsButtonBlock {
 const QuizStepsButtonBlock: React.FC<IQuizStepsButtonBlock> = ({ activeStep, handleNext, handleBack, stepsLength, }) => {
     return (
         <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', pt: 2 }}>
-            <Button
-            color="inherit"
-            disabled={activeStep === 0}
-            onClick={handleBack}
-            sx={{ mr: 1 }}
-            >
+            <Button disabled={activeStep === 0} onClick={handleBack}>
                 Назад
             </Button>
-
             <Button disabled={activeStep === stepsLength - 1} onClick={handleNext}>
                 Вперед
             </Button>
