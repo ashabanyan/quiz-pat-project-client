@@ -70,9 +70,9 @@ const QuizQuestionsForm: React.FC<IQuizQuestionsForm> = ({ roundsInfo, presaveDa
                         <Grid container spacing={3}>
                             {roundsInfo && <FieldArray name="roundsQuestions">
                                 {() => 
-                                    roundsInfo.map((round, index) => (
+                                    roundsInfo.map((round, roundIndex) => (
                                         (
-                                            <>
+                                            <React.Fragment key={`round_${roundIndex}`}>
                                                 <Grid item xs={12}>
                                                     <Typography variant="h5" gutterBottom component="div">
                                                         {`Раунд ${round.id + 1}`}
@@ -98,10 +98,10 @@ const QuizQuestionsForm: React.FC<IQuizQuestionsForm> = ({ roundsInfo, presaveDa
 
                                                         return (
                                                             <>
-                                                                {currentQuestions && currentQuestions.map((question, index) => {
+                                                                {currentQuestions && currentQuestions.map((question, questionIndex) => {
                                                                     return (
                                                                         <FormikDoubleTextInput 
-                                                                            key={round.id} 
+                                                                            key={`round_${roundIndex}_question_${questionIndex}`} 
                                                                             leftName={`roundsQuestions.${round.id}.questions.${question.id}.question`}
                                                                             rightName={`roundsQuestions.${round.id}.questions.${question.id}.answer`}
                                                                             leftLabel="Вопрос"
@@ -114,7 +114,7 @@ const QuizQuestionsForm: React.FC<IQuizQuestionsForm> = ({ roundsInfo, presaveDa
                                                         )}  
                                                     }
                                                 </FieldArray>
-                                            </>
+                                            </React.Fragment>
                                         )
                                     ))
                                 }
